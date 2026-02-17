@@ -8,7 +8,7 @@ services:
       - XDG_RUNTIME_DIR=/tmp/runtime-kid3user
     volumes:
       # Mount your music directory
-      - ${MUSIC_DIR:-./music}:/music
+      - ${MUSIC_DIR}:/music
       # X11 socket for GUI
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       # Optional: persist Kid3 configuration
@@ -27,7 +27,7 @@ services:
     ports:
       - "5879:5879"
     volumes:
-      - ${MUSIC_DIR:-./music}:/music
+      - ${MUSIC_DIR}:/music
       - kid3-config:/home/kid3user/.config
     command: ["/usr/local/bin/start-kid3-vnc.sh"]
     stdin_open: true
