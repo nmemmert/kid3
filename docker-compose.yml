@@ -1,0 +1,37 @@
+services:
+  kid3:
+    image: ghcr.io/nmemmert/kid3:latest
+    container_name: kid3
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - XDG_RUNTIME_DIR=/tmp/runtime-kid3user
+    volumes:
+      # Mount your music directory
+      - ${MUSIC_DIR:-./music}:/music
+      # X11 socket for GUI
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      # Optional: persist Kid3 configuration
+      - kid3-config:/home/kid3user/.config
+    stdin_open: true
+    tty: true
+
+  kid3-vnc:
+    image: ghcr.io/nmemmert/kid3:latest
+    container_name: kid3-vnc
+    environment:
+      - DISPLAY=:1
+      - VNC_PORT=5900
+      - NOVNC_PORT=5879
+      - SCREEN=1280x720x24
+    ports:
+      - "5879:5879"
+    volumes:
+      - ${MUSIC_DIR:-./music}:/music
+      - kid3-config:/home/kid3user/.config
+    command: ["/usr/local/bin/start-kid3-vnc.sh"]
+    stdin_open: true
+    tty: true
+
+volumes:
+  kid3-config:

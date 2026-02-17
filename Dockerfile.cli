@@ -1,0 +1,16 @@
+# Kid3 CLI-Only Container (Lightweight)
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    kid3-cli \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN useradd -m -s /bin/bash kid3user
+
+USER kid3user
+WORKDIR /home/kid3user
+
+CMD ["kid3-cli"]
