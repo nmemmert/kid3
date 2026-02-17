@@ -6,7 +6,9 @@ This repository provides a containerized version of [Kid3](https://kid3.kde.org/
 
 **Pull and run the pre-built image from GitHub Container Registry:**
 
-### Browser Mode (No X11 Required - Easiest)
+### Browser Mode - Recommended (No X11 Setup Required!)
+The easiest way to use Kid3 - X11 runs inside the container, you just need a web browser.
+
 ```bash
 docker run -d --name kid3-vnc \
   -p 5879:5879 \
@@ -16,7 +18,9 @@ docker run -d --name kid3-vnc \
 ```
 Then open **http://localhost:5879/vnc.html** in your browser and click "Connect".
 
-### GUI Mode (X11)
+**No X11 configuration needed on your host!** The container includes Xvfb (virtual X server).
+
+### GUI Mode (X11) - Requires Host X11
 ```bash
 xhost +local:docker
 docker run -it --rm \
@@ -50,22 +54,32 @@ Kid3 allows you to:
 This container includes:
 - **kid3-qt**: Qt-based GUI version (default)
 - **kid3-cli**: Command-line interface version
+- **Xvfb**: Virtual X server (for browser mode - no host X11 needed!)
+- **noVNC/websockify**: Web-based VNC client for browser access
 
 The Docker images install Kid3 from Ubuntu packages for faster, more reliable builds.
 
 ## Prerequisites
 
-- Docker
-- Docker Compose (optional, but recommended)
-- X11 server (for GUI mode) or a web browser (for noVNC mode)
+### For Browser Mode (Recommended - Easiest)
+- **Docker**
+- **Web Browser** (that's it!)
 
-### Linux Users
+No X11 or special configuration needed! The container includes its own X server (Xvfb).
+
+### For X11 Mode (Advanced)
+- Docker
+- X11 server on your host machine
+
+**X11 Setup Instructions (Only if using X11 mode):**
+
+#### Linux Users
 X11 should already be available. You may need to allow Docker to connect to your X server:
 ```bash
 xhost +local:docker
 ```
 
-### macOS Users
+#### macOS Users
 Install XQuartz:
 ```bash
 brew install --cask xquartz
@@ -73,7 +87,7 @@ brew install --cask xquartz
 
 Start XQuartz and enable "Allow connections from network clients" in preferences.
 
-### Windows Users
+#### Windows Users
 Install an X Server like:
 - VcXsrv
 - Xming
@@ -111,7 +125,9 @@ docker compose build
 
 ## Running Kid3
 
-### GUI Mode (kid3-qt)
+### GUI Mode (kid3-qt) - X11
+
+**Note:** This mode requires X11 on your host system. If you don't want to configure X11, use [Browser Mode](#browser-mode-novnc---recommended) instead.
 
 #### Using Docker Compose (Recommended)
 ```bash
@@ -123,9 +139,11 @@ export MUSIC_DIR=$HOME/Music
 docker compose up
 ```
 
-### Browser Mode (noVNC)
+### Browser Mode (noVNC) - Recommended
 
-This mode runs Kid3 in a virtual display and exposes it through a web browser - **no X11 configuration needed!**
+This mode runs Kid3 with its own X server (Xvfb) inside the container and exposes it through a web browser.
+
+**No X11 configuration needed on your host!** Everything runs inside the container.
 
 #### Using Docker Compose (Recommended)
 ```bash
