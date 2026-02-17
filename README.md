@@ -16,7 +16,7 @@ docker run -d --name kid3-vnc \
   ghcr.io/nmemmert/kid3:latest \
   /usr/local/bin/start-kid3-vnc.sh
 ```
-Then open **http://localhost:5879/vnc.html** in your browser and click "Connect".
+Then open **http://localhost:5879** in your browser and click "Connect".
 
 **No X11 configuration needed on your host!** The container includes Xvfb (virtual X server).
 
@@ -161,7 +161,7 @@ docker run -d --name kid3-vnc \
   /usr/local/bin/start-kid3-vnc.sh
 ```
 
-Then open: **http://localhost:5879/vnc.html**
+Then open: **http://localhost:5879**
 
 Click the "Connect" button to start using Kid3 in your browser.
 

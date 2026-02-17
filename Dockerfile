@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     libglib2.0-0 \
     ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -sf vnc.html /usr/share/novnc/index.html
 
 RUN useradd -m -s /bin/bash kid3user \
     && mkdir -p /tmp/runtime-kid3user \
