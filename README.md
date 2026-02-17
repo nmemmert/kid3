@@ -2,6 +2,38 @@
 
 This repository provides a containerized version of [Kid3](https://kid3.kde.org/), an efficient audio tagger that supports a large variety of file formats.
 
+## Quick Start
+
+**Pull and run the pre-built image from GitHub Container Registry:**
+
+### Browser Mode (No X11 Required - Easiest)
+```bash
+docker run -d --name kid3-vnc \
+  -p 5879:5879 \
+  -v ~/Music:/music \
+  ghcr.io/nmemmert/kid3:latest \
+  /usr/local/bin/start-kid3-vnc.sh
+```
+Then open **http://localhost:5879/vnc.html** in your browser and click "Connect".
+
+### GUI Mode (X11)
+```bash
+xhost +local:docker
+docker run -it --rm \
+  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
+  -v ~/Music:/music \
+  ghcr.io/nmemmert/kid3:latest
+```
+
+### CLI Mode
+```bash
+docker run -it --rm \
+  -v ~/Music:/music \
+  ghcr.io/nmemmert/kid3:latest \
+  kid3-cli
+```
+
 ## Features
 
 Kid3 allows you to:
@@ -47,15 +79,33 @@ Install an X Server like:
 - Xming
 - X410
 
-## Building the Container
+## Installation
 
-### Using Docker
+### Option 1: Pull Pre-built Image (Recommended)
+
+The easiest way to use Kid3 is to pull the pre-built image from GitHub Container Registry:
+
 ```bash
+docker pull ghcr.io/nmemmert/kid3:latest
+```
+
+Then use it directly (see [Quick Start](#quick-start) above).
+
+### Option 2: Build from Source
+
+If you prefer to build the image yourself:
+
+#### Using Docker
+```bash
+git clone https://github.com/nmemmert/kid3.git
+cd kid3
 docker build -t kid3:latest .
 ```
 
-### Using Docker Compose
+#### Using Docker Compose
 ```bash
+git clone https://github.com/nmemmert/kid3.git
+cd kid3
 docker compose build
 ```
 
@@ -75,28 +125,41 @@ docker compose up
 
 ### Browser Mode (noVNC)
 
-This mode runs Kid3 in a virtual display and exposes it in a browser.
+This mode runs Kid3 in a virtual display and exposes it through a web browser - **no X11 configuration needed!**
 
+#### Using Docker Compose (Recommended)
 ```bash
 export MUSIC_DIR=$HOME/Music
 docker compose up kid3-vnc
 ```
 
-Then open: `http://localhost:5879`
+#### Using Docker directly with pre-built image
+```bash
+docker run -d --name kid3-vnc \
+  -p 5879:5879 \
+  -v ~/Music:/music \
+  -v kid3-config:/home/kid3user/.config \
+  ghcr.io/nmemmert/kid3:latest \
+  /usr/local/bin/start-kid3-vnc.sh
+```
+
+Then open: **http://localhost:5879/vnc.html**
+
+Click the "Connect" button to start using Kid3 in your browser.
 
 #### Using Docker directly
 ```bash
 # Allow X11 connections
 xhost +local:docker
 
-# Run the container
+# Run the container with pre-built image
 docker run -it --rm \
   -e DISPLAY=$DISPLAY \
   -e QT_X11_NO_MITSHM=1 \
   -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
   -v ~/Music:/music \
   -v kid3-config:/home/kid3user/.config \
-  kid3:latest
+  ghcr.io/nmemmert/kid3:latest
 ```
 
 ### CLI Mode (kid3-cli)
@@ -104,7 +167,7 @@ docker run -it --rm \
 ```bash
 docker run -it --rm \
   -v ~/Music:/music \
-  kid3:latest \
+  ghcr.io/nmemmert/kid3:latest \
   kid3-cli
 ```
 
@@ -138,7 +201,7 @@ Or run commands directly:
 ```bash
 docker run -it --rm \
   -v ~/Music:/music \
-  kid3:latest \
+  ghcr.io/nmemmert/kid3:latest \
   kid3-cli -c "cd /music" -c "select song.mp3" -c "set artist 'New Artist'" -c "save"
 ```
 
@@ -148,6 +211,28 @@ The container uses the following volume mounts:
 
 - `/music` - Your music files directory (configurable via MUSIC_DIR environment variable)
 - `/home/kid3user/.config` - Kid3 configuration persistence (named volume)
+
+## Managing Containers
+
+### Stop a running container
+```bash
+docker stop kid3-vnc
+```
+
+### Remove a stopped container
+```bash
+docker rm kid3-vnc
+```
+
+### View container logs
+```bash
+docker logs kid3-vnc
+```
+
+### Restart a stopped container
+```bash
+docker start kid3-vnc
+```
 
 ## Environment Variables
 
@@ -175,7 +260,7 @@ docker run -it --rm \
   -v ~/Music:/music \
   -v ~/Downloads:/downloads \
   -v kid3-config:/home/kid3user/.config \
-  kid3:latest
+  ghcr.io/nmemmert/kid3:latest
 ```
 
 ### Running as Interactive Shell
@@ -183,7 +268,7 @@ To explore the container:
 ```bash
 docker run -it --rm \
   -v ~/Music:/music \
-  kid3:latest \
+  ghcr.io/nmemmert/kid3:latest \
   /bin/bash
 ```
 
@@ -216,6 +301,8 @@ Kid3 is licensed under GPL-2.0+. This Dockerfile is provided as-is for convenien
 
 ## Links
 
+- [Docker Image on GitHub Container Registry](https://github.com/nmemmert/kid3/pkgs/container/kid3)
+- [GitHub Repository](https://github.com/nmemmert/kid3)
 - [Kid3 Official Website](https://kid3.kde.org/)
 - [Kid3 Source Repository](https://invent.kde.org/multimedia/kid3)
 - [Kid3 GitHub Mirror](https://github.com/KDE/kid3)
